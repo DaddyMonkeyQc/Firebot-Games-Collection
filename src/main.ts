@@ -1,32 +1,43 @@
 import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
+import { initLogger, logger } from "./logger";
 
 interface Params {
-  message: string;
+  enabled: boolean;
 }
 
 const script: Firebot.CustomScript<Params> = {
   getScriptManifest: () => {
     return {
-      name: "Starter Custom Script",
-      description: "A starter custom script for build",
-      author: "SomeDev",
-      version: "1.0",
+      name: "Custom Games Loader",
+      description: "A Collection of visual Games for Firebot",
+      author: "DaddyMonkeyQc",
+      version: "0.1",
       firebotVersion: "5",
     };
   },
   getDefaultParameters: () => {
     return {
-      message: {
-        type: "string",
-        default: "Hello World!",
-        description: "Message",
-        secondaryDescription: "Enter a message here",
+      enabled: {
+        type: "boolean",
+        default: true,
+        description: "Enabled "
       },
     };
   },
   run: (runRequest) => {
-    const { logger } = runRequest.modules;
-    logger.info(runRequest.parameters.message);
+    initLogger(runRequest.modules.logger);
+
+    if (runRequest.parameters.enabled) {
+      logger.info("Custom Games enabled");
+
+      [
+        'slots/slots'
+      ].forEach(filename => {
+        const definition = require(`./games/${filename}.js`);
+        runRequest.modules.gameManager.registerGame(definition);
+        logger.info(`Custom Game ${definition.name} with ID: ${definition.id} loaded`)
+      });
+    }
   },
 };
 

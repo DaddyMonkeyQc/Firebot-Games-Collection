@@ -28,10 +28,12 @@ const spinCommand: SystemCommand = {
         ]
     },
     onTriggerEvent: async event => {
-        const instance = GamesManagerSingleton.getInstance()
-        instance.logger.info("Game have been triggered");
+        const { userCommand, command, commandOptions } = event;
 
-        const { userCommand } = event;
+        const instance = GamesManagerSingleton.getInstance()
+
+        instance.logger.info(`Game have been triggered by ${userCommand.commandSender}`);
+        instance.twitchChat.sendChatMessage("Spin Command done!", null, "bot")
     }
 };
 

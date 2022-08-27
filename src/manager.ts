@@ -5,16 +5,18 @@ class CustomGamesManager {
     readonly gameManager: ScriptModules['gameManager'];
     readonly commandManager: ScriptModules['commandManager'];
     readonly httpServer: ScriptModules['httpServer'];
+    readonly twitchChat: ScriptModules['twitchChat'];
 
     private games: Array<String> = [
         "slots/slots"
     ];
 
-    constructor(logger: ScriptModules['logger'], gameManager: ScriptModules['gameManager'], commandManager: ScriptModules['commandManager'], httpServer: ScriptModules['httpServer']) {
+    constructor(logger: ScriptModules['logger'], gameManager: ScriptModules['gameManager'], commandManager: ScriptModules['commandManager'], httpServer: ScriptModules['httpServer'], twitchChat: ScriptModules['twitchChat']) {
         this.logger = logger;
         this.gameManager = gameManager;
         this.commandManager = commandManager;
         this.httpServer = httpServer;
+        this.twitchChat = twitchChat;
     }
 
     public register() {
@@ -35,9 +37,9 @@ export class GamesManagerSingleton {
         return GamesManagerSingleton.instance;
     }
 
-    public static init(logger: ScriptModules['logger'], gameManager: ScriptModules['gameManager'], commandManager: ScriptModules['commandManager'], httpServer: ScriptModules['httpServer']) {
+    public static init(logger: ScriptModules['logger'], gameManager: ScriptModules['gameManager'], commandManager: ScriptModules['commandManager'], httpServer: ScriptModules['httpServer'], twitchChat: ScriptModules['twitchChat']) {
         if (!GamesManagerSingleton.instance) {
-            GamesManagerSingleton.instance = new CustomGamesManager(logger, gameManager, commandManager, httpServer);
+            GamesManagerSingleton.instance = new CustomGamesManager(logger, gameManager, commandManager, httpServer, twitchChat);
         }
     }
 }

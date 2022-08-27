@@ -1,5 +1,5 @@
 import { Firebot } from "@crowbartools/firebot-custom-scripts-types";
-import { initLogger, logger } from "./logger";
+import { GamesManagerSingleton } from "./manager";
 
 interface Params {
   enabled: boolean;
@@ -25,18 +25,11 @@ const script: Firebot.CustomScript<Params> = {
     };
   },
   run: (runRequest) => {
-    initLogger(runRequest.modules.logger);
-
     if (runRequest.parameters.enabled) {
-      logger.info("Custom Games enabled");
-
-      [
-        'slots/slots'
-      ].forEach(filename => {
-        const definition = require(`./games/${filename}.js`);
-        runRequest.modules.gameManager.registerGame(definition);
-        logger.info(`Custom Game ${definition.name} with ID: ${definition.id} loaded`)
-      });
+      const { logger, gameManager, commandManager, httpServer } = runRequest.modules;
+      GamesManagerSingleton.init(logger, gameManager, commandManager, httpServer);
+      const instance = GamesManagerSingleton.getInstance()
+      instance.register();
     }
   },
 };

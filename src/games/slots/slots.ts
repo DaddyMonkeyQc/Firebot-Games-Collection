@@ -1,6 +1,7 @@
 "use strict";
-// const spinCommand = require("./spin-command");
-const logger = require("../../logger");
+
+import { SpinCommand } from "./spin-command";
+
 
 /**
  * @type {import("@crowbartools/firebot-custom-scripts-types/types/modules/game-manager").FirebotGame}
@@ -207,16 +208,13 @@ module.exports = {
         }
     },
     onLoad: () => {
-        logger.info("Game onLoad");
-        // spinCommand.registerSpinCommand();
+        SpinCommand.registerSpinCommand();
     },
     onUnload: () => {
-        logger.info("Game onUnload");
-        // spinCommand.unregisterSpinCommand();
-        // spinCommand.purgeCaches();
+        SpinCommand.unregisterSpinCommand();
+        SpinCommand.purgeCaches();
     },
     onSettingsUpdate: () => {
-        logger.info("Game onSettingsUpdate");
-        // spinCommand.purgeCaches();
+        SpinCommand.purgeCaches();
     }
 };

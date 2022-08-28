@@ -1,30 +1,54 @@
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
+import { CustomGameDefinition } from "./models/custom-game-definition";
 
-class CustomGamesManager {
+export class CustomGamesManager {
+    public static identifier = "daddymonkey"
+
     readonly logger: ScriptModules['logger'];
     readonly gameManager: ScriptModules['gameManager'];
     readonly commandManager: ScriptModules['commandManager'];
     readonly httpServer: ScriptModules['httpServer'];
     readonly twitchChat: ScriptModules['twitchChat'];
+    readonly effectManager: ScriptModules['effectManager'];
+    readonly eventManager: ScriptModules['eventManager'];
 
-    private games: Array<String> = [
-        "slots/slots"
-    ];
+    private static formatID(key: string): string {
+        return `${CustomGamesManager.identifier}:${key}`
+    }
 
-    constructor(logger: ScriptModules['logger'], gameManager: ScriptModules['gameManager'], commandManager: ScriptModules['commandManager'], httpServer: ScriptModules['httpServer'], twitchChat: ScriptModules['twitchChat']) {
+    public static games: Record<string, CustomGameDefinition> = {
+        "slots": {
+            gameID: CustomGamesManager.formatID("slots"),
+            cmdID: CustomGamesManager.formatID("slots"),
+            path: "slots/slots"
+        },
+    };
+
+    constructor(
+        logger: ScriptModules['logger'],
+        gameManager: ScriptModules['gameManager'],
+        commandManager: ScriptModules['commandManager'],
+        httpServer: ScriptModules['httpServer'],
+        twitchChat: ScriptModules['twitchChat'],
+        effectManager: ScriptModules['effectManager'],
+        eventManager: ScriptModules['eventManager'],
+    ) {
         this.logger = logger;
         this.gameManager = gameManager;
         this.commandManager = commandManager;
         this.httpServer = httpServer;
         this.twitchChat = twitchChat;
+        this.effectManager = effectManager;
+        this.eventManager = eventManager;
     }
 
     public register() {
-        this.games.forEach(game => {
-            const definition = require(`./games/${game}.ts`);
+        for (const key in CustomGamesManager.games) {
+            const customGameDef = CustomGamesManager.games[key];
+            const definition = require(`./games/${customGameDef.path}.ts`);
             this.gameManager.registerGame(definition);
             this.logger.info(`Custom Games Manager registered game ${definition.name} with ID: ${definition.id}`)
-        });
+        }
     }
 }
 
@@ -37,9 +61,26 @@ export class GamesManagerSingleton {
         return GamesManagerSingleton.instance;
     }
 
-    public static init(logger: ScriptModules['logger'], gameManager: ScriptModules['gameManager'], commandManager: ScriptModules['commandManager'], httpServer: ScriptModules['httpServer'], twitchChat: ScriptModules['twitchChat']) {
+    public static init(
+        logger: ScriptModules['logger'],
+        gameManager: ScriptModules['gameManager'],
+        commandManager: ScriptModules['commandManager'],
+        httpServer: ScriptModules['httpServer'],
+        twitchChat: ScriptModules['twitchChat'],
+        effectManager: ScriptModules['effectManager'],
+        eventManager: ScriptModules['eventManager']
+    ) {
         if (!GamesManagerSingleton.instance) {
-            GamesManagerSingleton.instance = new CustomGamesManager(logger, gameManager, commandManager, httpServer, twitchChat);
+            GamesManagerSingleton.instance = new CustomGamesManager(
+                logger,
+                gameManager,
+                commandManager,
+                httpServer,
+                twitchChat,
+                effectManager,
+                eventManager
+            );
+            GamesManagerSingleton.instance.register();
         }
     }
 }

@@ -1,13 +1,14 @@
 "use strict";
 
 import { SystemCommand } from "@crowbartools/firebot-custom-scripts-types/types/modules/command-manager";
-import { GamesManagerSingleton } from "../../manager";
+import { CustomGamesManager, GamesManagerSingleton } from "../../manager";
+import { GameVisualEffect } from "../../models/game-visual-effect";
 
-const SPIN_COMMAND_ID = "daddymonkey:casino";
+const customGameDef = CustomGamesManager.games['slots'];
 
 const spinCommand: SystemCommand = {
     definition: {
-        id: SPIN_COMMAND_ID,
+        id: customGameDef.cmdID,
         name: "Spin (Visual Slots)",
         active: true,
         trigger: "!casino",
@@ -31,9 +32,12 @@ const spinCommand: SystemCommand = {
         const { userCommand, command, commandOptions } = event;
 
         const instance = GamesManagerSingleton.getInstance()
+        const settings = instance.gameManager.getGameSettings(customGameDef.gameID);
 
         instance.logger.info(`Game have been triggered by ${userCommand.commandSender}`);
+        
         instance.twitchChat.sendChatMessage("Spin Command done!", null, "bot")
+        instance.effectManager
     }
 };
 
@@ -41,14 +45,14 @@ export class SpinCommand {
     static registerSpinCommand() {
         const instance = GamesManagerSingleton.getInstance()
 
-        if (!instance.commandManager.hasSystemCommand(SPIN_COMMAND_ID)) {
+        if (!instance.commandManager.hasSystemCommand(customGameDef.cmdID)) {
             instance.commandManager.registerSystemCommand(spinCommand);
         }
     }
 
     static unregisterSpinCommand() {
         const instance = GamesManagerSingleton.getInstance()
-        instance.commandManager.unregisterSystemCommand(SPIN_COMMAND_ID);
+        instance.commandManager.unregisterSystemCommand(customGameDef.cmdID);
     }
 
     static purgeCaches() {

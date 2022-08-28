@@ -2,10 +2,10 @@
 
 import { FirebotGame } from "@crowbartools/firebot-custom-scripts-types/types/modules/game-manager";
 import { SpinCommand } from "./spin-command";
-
+import { CustomGamesManager } from "../../manager"
 
 const slots: FirebotGame = {
-    id: "daddymonkey-slots",
+    id: CustomGamesManager.games['slots'].gameID,
     name: "Slots Visual",
     subtitle: "Spin to win",
     description: "Visual Casino Slots Machine",
@@ -52,7 +52,7 @@ const slots: FirebotGame = {
                 successChances: {
                     type: "role-percentages",
                     title: "Roll Success Chances",
-                    default: 0.5,
+                    default: null,
                     showBottomHr: false,
                     description: "The chances each roll will be successful (There are 3 rolls per spin)",
                     tip: "The success chance for the first user role a viewer has in this list is used, so ordering is important!",
@@ -154,7 +154,6 @@ const slots: FirebotGame = {
                     type: "string",
                     title: "More Than 0",
                     description: "When the user tries to spin with 0 currency (leave empty for no message).",
-
                     default: "{username}, your wager amount must be more than 0.",
                     tip: "Available variables: {username}",
                     sortRank: 5,
@@ -167,7 +166,6 @@ const slots: FirebotGame = {
                     type: "string",
                     title: "Amount Too Low",
                     description: "When the wager amount is too low (leave empty for no message).",
-
                     default: "{username}, your wager amount must be at least {minWager}.",
                     tip: "Available variables: {username}, {minWager}",
                     sortRank: 6,
@@ -180,7 +178,6 @@ const slots: FirebotGame = {
                     type: "string",
                     title: "Amount Too High",
                     description: "When the wager amount is too high (leave empty for no message).",
-
                     default: "{username}, your wager amount must be at least {maxWager}.",
                     tip: "Available variables: {username}, {maxWager}",
                     sortRank: 7,
@@ -193,7 +190,6 @@ const slots: FirebotGame = {
                     type: "string",
                     title: "Not Enough",
                     description: "When the user doesn't have enough to wager the chosen amount (leave empty for no message).",
-
                     default: "{username}, you don't have enough to wager this amount!",
                     tip: "Available variables: {username}",
                     sortRank: 8,
@@ -206,7 +202,6 @@ const slots: FirebotGame = {
                     type: "string",
                     title: "Spinning In Action",
                     description: "When the spin is going on (leave empty for no message).",
-
                     default: "{username} pulls back the lever...",
                     tip: "Available variables: {username}",
                     sortRank: 9,

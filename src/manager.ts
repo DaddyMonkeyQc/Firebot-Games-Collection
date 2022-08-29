@@ -1,5 +1,7 @@
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import { CustomGameDefinition } from "./models/custom-game-definition";
+import { GameVisualEffect } from "./models/game-visual-effect";
+import { superGame } from "./games/slots/slots-logic";
 
 export class CustomGamesManager {
     public static identifier = "daddymonkey"
@@ -20,7 +22,8 @@ export class CustomGamesManager {
         "slots": {
             gameID: CustomGamesManager.formatID("slots"),
             cmdID: CustomGamesManager.formatID("slots"),
-            path: "slots/slots"
+            path: "slots/slots",
+            func: superGame
         },
     };
 
@@ -49,6 +52,7 @@ export class CustomGamesManager {
             this.gameManager.registerGame(definition);
             this.logger.info(`Custom Games Manager registered game ${definition.name} with ID: ${definition.id}`)
         }
+        this.effectManager.registerEffect(GameVisualEffect);
     }
 }
 

@@ -1,7 +1,13 @@
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
+import { HttpServerManager } from "@crowbartools/firebot-custom-scripts-types/types/modules/http-server-manager";
 import { CustomGameDefinition } from "./models/custom-game-definition";
 import { GameVisualEffect } from "./models/game-visual-effect";
 import { superGame } from "./games/slots/slots-logic";
+import {Request, Response} from "express";
+
+function callback(){
+    console.info("Callback received");
+}
 
 export class CustomGamesManager {
     public static identifier = "daddymonkey"
@@ -53,6 +59,11 @@ export class CustomGamesManager {
             this.logger.info(`Custom Games Manager registered game ${definition.name} with ID: ${definition.id}`)
         }
         this.effectManager.registerEffect(GameVisualEffect);
+        this.httpServer.registerCustomRoute("callback","result","POST",(req:any,res:any)=>{
+            this.logger.info("Received the callback");
+            this.logger.info(req.body);
+            res.status(200).send({"message":"ok"})
+        });
     }
 }
 

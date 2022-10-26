@@ -7,6 +7,10 @@ interface keyable {
     [key: string]: any
 }
 
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
 export const GameVisualEffect: Effects.EffectType<{}> = {
     definition: {
         id: `daddymonkey:game-visual-effect`,
@@ -40,7 +44,9 @@ export const GameVisualEffect: Effects.EffectType<{}> = {
                 $(document).ready(function () {
                     $.runFunction().then((value:string)=>{
                         console.log(value);
-                        // $('.wrapper').empty()
+                        setTimeout(() => {
+                            $('.wrapper').empty()
+                        }, 2000);
                     }
                     );
                 })

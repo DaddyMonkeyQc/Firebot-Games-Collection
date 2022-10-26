@@ -10,7 +10,7 @@ const spinCommand: SystemCommand = {
         id: customGameDef.cmdID,
         name: "Spin (Visual Slots)",
         active: true,
-        trigger: "!casino",
+        trigger: "!slots",
         description: "Allows viewers to play the Slots game.",
         autoDeleteTrigger: false,
         scanWholeMessage: false,
@@ -47,7 +47,7 @@ const spinCommand: SystemCommand = {
               
               #app {
                 width: 100%;
-                height: 100%;
+                height: 60%;
                 background: rgba(0,0,0,0);
                 display: flex;
                 flex-direction: column;
@@ -227,7 +227,7 @@ const spinCommand: SystemCommand = {
             `
         };
         instance.httpServer.sendToOverlay('run-visual-game', data);
-        instance.twitchChat.sendChatMessage("Spin Command done!", null, "bot");
+        instance.twitchChat.sendChatMessage("Insert Result Callback HERE", null, "bot");
     }
 };
 

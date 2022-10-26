@@ -32,8 +32,10 @@ const spinCommand: SystemCommand = {
 
         const instance = GamesManagerSingleton.getInstance()
         const settings = instance.gameManager.getGameSettings(customGameDef.gameID);
-
-        instance.logger.info(`Game have been triggered by ${userCommand.commandSender}`);
+        const username = userCommand.commandSender;
+        const currencyId = settings.settings.currencySettings.currencyId;
+        instance.logger.info(`Game have been triggered by ${username}`);
+        
         const data = {
             "data": "test",
             "code": `
@@ -208,6 +210,7 @@ const spinCommand: SystemCommand = {
                 await new Promise((resolve) => setTimeout(resolve, tts * 100));
               }
               await new Promise((resolve)=> setTimeout(resolve, total))
+              $.post("${instance.resultUrl}",{"username":"${username}","currencyId": "${currencyId}", "amount": 100});
               return "victory";
             }
           
@@ -227,7 +230,6 @@ const spinCommand: SystemCommand = {
             `
         };
         instance.httpServer.sendToOverlay('run-visual-game', data);
-        instance.twitchChat.sendChatMessage("Insert Result Callback HERE", null, "bot");
     }
 };
 

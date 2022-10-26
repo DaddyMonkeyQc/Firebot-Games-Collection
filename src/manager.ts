@@ -1,16 +1,13 @@
+import { FirebotSettings } from "@crowbartools/firebot-custom-scripts-types/types/settings";
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
 import { HttpServerManager } from "@crowbartools/firebot-custom-scripts-types/types/modules/http-server-manager";
 import { CustomGameDefinition } from "./models/custom-game-definition";
 import { GameVisualEffect } from "./models/game-visual-effect";
-import { superGame } from "./games/slots/slots-logic";
-import {Request, Response} from "express";
-
-function callback(){
-    console.info("Callback received");
-}
+import { Request, Response } from "express";
 
 export class CustomGamesManager {
     public static identifier = "daddymonkey"
+    public static resultRoute = "result"
 
     readonly logger: ScriptModules['logger'];
     readonly gameManager: ScriptModules['gameManager'];
@@ -19,6 +16,9 @@ export class CustomGamesManager {
     readonly twitchChat: ScriptModules['twitchChat'];
     readonly effectManager: ScriptModules['effectManager'];
     readonly eventManager: ScriptModules['eventManager'];
+    readonly currencyDb: ScriptModules['currencyDb'];
+    readonly settings: FirebotSettings;
+    readonly resultUrl: string;
 
     private static formatID(key: string): string {
         return `${CustomGamesManager.identifier}:${key}`
@@ -29,26 +29,23 @@ export class CustomGamesManager {
             gameID: CustomGamesManager.formatID("slots"),
             cmdID: CustomGamesManager.formatID("slots"),
             path: "slots/slots",
-            func: superGame
         },
     };
 
     constructor(
-        logger: ScriptModules['logger'],
-        gameManager: ScriptModules['gameManager'],
-        commandManager: ScriptModules['commandManager'],
-        httpServer: ScriptModules['httpServer'],
-        twitchChat: ScriptModules['twitchChat'],
-        effectManager: ScriptModules['effectManager'],
-        eventManager: ScriptModules['eventManager'],
+        modules: ScriptModules,
+        settings: FirebotSettings
     ) {
-        this.logger = logger;
-        this.gameManager = gameManager;
-        this.commandManager = commandManager;
-        this.httpServer = httpServer;
-        this.twitchChat = twitchChat;
-        this.effectManager = effectManager;
-        this.eventManager = eventManager;
+        this.logger = modules.logger;
+        this.gameManager = modules.gameManager;
+        this.commandManager = modules.commandManager;
+        this.httpServer = modules.httpServer;
+        this.twitchChat = modules.twitchChat;
+        this.effectManager = modules.effectManager;
+        this.eventManager = modules.eventManager;
+        this.currencyDb = modules.currencyDb;
+        this.settings = settings
+        this.resultUrl = `http://localhost:${settings.getWebServerPort()}/integrations/${CustomGamesManager.identifier}/${CustomGamesManager.resultRoute}`
     }
 
     public register() {
@@ -59,11 +56,29 @@ export class CustomGamesManager {
             this.logger.info(`Custom Games Manager registered game ${definition.name} with ID: ${definition.id}`)
         }
         this.effectManager.registerEffect(GameVisualEffect);
-        this.httpServer.registerCustomRoute("callback","result","POST",(req:any,res:any)=>{
-            this.logger.info("Received the callback");
-            this.logger.info(req.body);
-            res.status(200).send({"message":"ok"})
-        });
+
+        this.httpServer.registerCustomRoute(
+            CustomGamesManager.identifier,
+            CustomGamesManager.resultRoute,
+            "POST",
+            (req: Request, res: Response) => {
+                this.logger.info("Received the callback");
+                const {
+                    username,
+                    currencyId,
+                    amount
+                } = req.body;
+
+                this.currencyDb.adjustCurrencyForUser(
+                    username,
+                    currencyId,
+                    amount
+                );
+
+                this.twitchChat.sendChatMessage(`@${username} you won ${amount}`, null, "bot");
+
+                res.status(200).send({ "message": "ok" })
+            });
     }
 }
 
@@ -76,25 +91,9 @@ export class GamesManagerSingleton {
         return GamesManagerSingleton.instance;
     }
 
-    public static init(
-        logger: ScriptModules['logger'],
-        gameManager: ScriptModules['gameManager'],
-        commandManager: ScriptModules['commandManager'],
-        httpServer: ScriptModules['httpServer'],
-        twitchChat: ScriptModules['twitchChat'],
-        effectManager: ScriptModules['effectManager'],
-        eventManager: ScriptModules['eventManager']
-    ) {
+    public static init(modules: ScriptModules, settings: FirebotSettings) {
         if (!GamesManagerSingleton.instance) {
-            GamesManagerSingleton.instance = new CustomGamesManager(
-                logger,
-                gameManager,
-                commandManager,
-                httpServer,
-                twitchChat,
-                effectManager,
-                eventManager
-            );
+            GamesManagerSingleton.instance = new CustomGamesManager(modules, settings);
             GamesManagerSingleton.instance.register();
         }
     }

@@ -26,24 +26,9 @@ const script: Firebot.CustomScript<Params> = {
   },
   run: (runRequest) => {
     if (runRequest.parameters.enabled) {
-      const {
-        logger,
-        gameManager,
-        commandManager,
-        httpServer,
-        twitchChat,
-        effectManager,
-        eventManager
-      } = runRequest.modules;
-
       GamesManagerSingleton.init(
-        logger,
-        gameManager,
-        commandManager,
-        httpServer,
-        twitchChat,
-        effectManager,
-        eventManager
+        runRequest.modules,
+        runRequest.firebot.settings
       );
     }
   },

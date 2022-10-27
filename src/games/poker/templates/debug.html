@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Slots Debug Page</title>
+    <link rel="stylesheet" href="game.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $("#gameContent").load("game.html");
+            $.getScript("game.js",()=>{
+                $.runFunction();
+            })
+        });
+    </script>
+</head>
+
+<body>
+    <div id="gameContent" style="height: 100%;width:100%;"></div>
+</body>
+</html>

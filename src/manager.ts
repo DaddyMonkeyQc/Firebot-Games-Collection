@@ -1,6 +1,5 @@
 import { FirebotSettings } from "@crowbartools/firebot-custom-scripts-types/types/settings";
 import { ScriptModules } from "@crowbartools/firebot-custom-scripts-types";
-import { HttpServerManager } from "@crowbartools/firebot-custom-scripts-types/types/modules/http-server-manager";
 import { CustomGameDefinition } from "./models/custom-game-definition";
 import { GameVisualEffect } from "./models/game-visual-effect";
 import { Request, Response } from "express";
@@ -28,7 +27,7 @@ export class CustomGamesManager {
         "slots": {
             gameID: CustomGamesManager.formatID("slots"),
             cmdID: CustomGamesManager.formatID("slots"),
-            path: "slots/slots",
+            path: "slots/game",
         },
     };
 

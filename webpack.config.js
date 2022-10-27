@@ -24,6 +24,18 @@ module.exports = {
         test: /\.ts$/,
         loader: "ts-loader",
       },
+      {
+        test: /\.html$/i,
+        use: 'raw-loader',
+      },
+      {
+        test: /\.css$/i,
+        use: 'raw-loader',
+      },
+      {
+        test: /\.js$/i,
+        use: 'raw-loader',
+      },
     ],
   },
   optimization: {

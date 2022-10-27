@@ -1,7 +1,7 @@
 "use strict";
 
 import { FirebotGame } from "@crowbartools/firebot-custom-scripts-types/types/modules/game-manager";
-import { SpinCommand } from "./spin-command";
+import { SpinCommand } from "./command";
 import { CustomGamesManager } from "../../manager"
 
 const slots: FirebotGame = {
